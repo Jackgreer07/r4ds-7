@@ -76,7 +76,103 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code>Schema
+date_raw: string
+coin_id: string
+price_usd: double
+market_cap_usd: double
+market_cap_str: string
+volume_usd: double</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 6
+   date_raw   coin_id   price_usd market_cap_usd market_cap_str   volume_usd
+   &lt;chr&gt;      &lt;chr&gt;         &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;                 &lt;dbl&gt;
+ 1 2021-06-19 btc     35556.             6.66e11 $666.27B       11402048601.
+ 2 2020-09-23 ltc        43.0            2.83e 9 $2.83B            91027915.
+ 3 2019-11-10 doge        0.00278        3.39e 8 $339.13M           7248830.
+ 4 2024-11-11 btc     88860.             1.76e12 $1.76T         45652137057.
+ 5 2021-06-16 mkr      2935.             2.91e 9 $2.91B            25138666.
+ 6 2025-08-25 mkr      1487.             6.05e 8 $604.5M           21672870.
+ 7 2023-11-27 ftt         3.61           1.19e 9 $1.19B           107932246.
+ 8 2022-10-29 doge        0.120          1.63e10 $16.34B         9469848661.
+ 9 2020-01-24 bch       319.             5.81e 9 $5.81B           367524039.
+10 2024-11-11 mkr      1533.             1.39e 9 $1.39B            75232732.</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 22 × 2
+   coin_id avg_market_cap_usd
+   &lt;chr&gt;                &lt;dbl&gt;
+ 1 btc                1.88e12
+ 2 eth                3.47e11
+ 3 xrp                2.22e11
+ 4 usdt               1.71e11
+ 5 bnb                1.05e11
+ 6 usdc               6.60e10
+ 7 doge               2.72e10
+ 8 ada                2.12e10
+ 9 link               1.51e10
+10 cro                1.12e10
+# ℹ 12 more rows</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 59,436 × 16
+   date_raw   coin_id price_usd market_cap_usd market_cap_str volume_usd
+   &lt;chr&gt;      &lt;chr&gt;       &lt;dbl&gt;          &lt;dbl&gt; &lt;chr&gt;               &lt;dbl&gt;
+ 1 2020-10-10 aave         88.4    1414665847. $1.41B            724068.
+ 2 2020-10-11 aave         65.6    1049444527. $1.05B            251413.
+ 3 2020-10-12 aave         51.4     822886639. $822.89M          839731.
+ 4 2020-10-13 aave         51.6     825600000  $825.6M          1027128.
+ 5 2020-10-14 aave         52.6     841440000  $841.44M         6580631.
+ 6 2020-10-15 aave         44.4     709656505. $709.66M        15554420.
+ 7 2020-10-16 aave         39.4     629946251. $629.95M         9084340.
+ 8 2020-10-17 aave         41.2     659192731. $659.19M         5182368.
+ 9 2020-10-18 aave         40.3     645313328. $645.31M         3861406.
+10 2020-10-19 aave         36.1     577487716. $577.49M         8227766.
+# ℹ 59,426 more rows
+# ℹ 10 more variables: date &lt;date&gt;, coin_name &lt;chr&gt;, symbol &lt;chr&gt;,
+#   category_id &lt;chr&gt;, launch_date &lt;chr&gt;, consensus &lt;chr&gt;, description &lt;chr&gt;,
+#   category_name &lt;chr&gt;, era_introduced &lt;chr&gt;, category_description &lt;chr&gt;</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell">
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in ggplot2::annotate("label", x = as.Date("2022-05-09"), y = 0.97, :
+Ignoring unknown parameters: `label.size`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning in ggplot2::annotate("label", x = as.Date("2022-11-09"), y = 0.97, :
+Ignoring unknown parameters: `label.size`</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 86 rows containing missing values or values outside the scale range
+(`geom_area()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="analysis_files/figure-html/unnamed-chunk-7-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 
 </main>
 <!-- /main column -->
