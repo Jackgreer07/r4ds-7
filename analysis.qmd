@@ -11,3 +11,139 @@ execute:
 library(tidyverse)
 library(arrow)
 ```
+
+```{r}
+arrow::open_dataset("data/daily_prices.parquet")$schema
+```
+
+```{r}
+arrow::read_parquet("data/daily_prices.parquet") |>
+  dplyr::slice_sample(n = 10) |>
+  tibble::as_tibble()
+```
+
+```{r}
+arrow::open_dataset("data/daily_prices.parquet") |>
+  dplyr::filter(date_raw >= "2025-01-01") |>
+  dplyr::group_by(coin_id) |>
+  dplyr::summarise(avg_market_cap_usd = mean(market_cap_usd, na.rm = TRUE)) |>
+  dplyr::arrange(dplyr::desc(avg_market_cap_usd)) |>
+  dplyr::collect() |>
+  tibble::as_tibble()
+```
+
+```{r}
+#| cache: true
+prices <- arrow::read_parquet("data/daily_prices.parquet")
+metadata <- arrow::read_parquet("data/coin_metadata.parquet")
+categories <- arrow::read_parquet("data/categories.parquet")
+crypto <- prices |>
+  dplyr::mutate(date = as.Date(date_raw)) |>
+  dplyr::left_join(metadata, by = "coin_id") |>
+  dplyr::left_join(
+    categories |>
+      dplyr::rename(category_description = description),
+    by = "category_id"
+  )
+crypto
+```
+
+```{r}
+crypto |>
+  dplyr::filter(coin_id == "btc") |>
+  ggplot2::ggplot(ggplot2::aes(x = date, y = price_usd)) +
+  ggplot2::geom_line(color = "#F7931A", linewidth = 0.6) +
+  ggplot2::scale_x_date(date_breaks = "1 year", date_labels = "%Y") +
+  ggplot2::scale_y_continuous(labels = scales::label_dollar()) +
+  ggplot2::labs(
+    title = "Bitcoin daily price",
+    x = NULL,
+    y = "Price (USD)"
+  ) +
+  ggplot2::theme_minimal(base_size = 12) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold"),
+    panel.grid.minor = ggplot2::element_blank()
+  )
+```
+
+```{r}
+crypto |>
+  dplyr::group_by(date, category_name) |>
+  dplyr::summarise(category_market_cap_usd = sum(market_cap_usd, na.rm = TRUE), .groups = "drop") |>
+  tidyr::complete(
+    date,
+    category_name,
+    fill = list(category_market_cap_usd = 0)
+  ) |>
+  dplyr::group_by(date) |>
+  dplyr::mutate(category_share = category_market_cap_usd / sum(category_market_cap_usd)) |>
+  dplyr::mutate(
+    category_name = forcats::fct_reorder(category_name, category_share, .fun = mean)
+  ) |>
+  ggplot2::ggplot(ggplot2::aes(
+    x = date,
+    y = category_share,
+    fill = category_name,
+    group = category_name
+  )) +
+  ggplot2::geom_area(stat = "identity") +
+  ggplot2::annotate(
+    "rect",
+    xmin = as.Date("2022-05-07"),
+    xmax = as.Date("2022-05-12"),
+    ymin = -Inf,
+    ymax = Inf,
+    fill = "grey20",
+    alpha = 0.18
+  ) +
+  ggplot2::annotate(
+    "rect",
+    xmin = as.Date("2022-11-08"),
+    xmax = as.Date("2022-11-11"),
+    ymin = -Inf,
+    ymax = Inf,
+    fill = "grey20",
+    alpha = 0.18
+  ) +
+  ggplot2::annotate(
+    "label",
+    x = as.Date("2022-05-09"),
+    y = 0.97,
+    label = "Luna/UST crash",
+    size = 3,
+    label.size = 0,
+    fill = "white",
+    alpha = 0.85
+  ) +
+  ggplot2::annotate(
+    "label",
+    x = as.Date("2022-11-09"),
+    y = 0.97,
+    label = "FTX collapse",
+    size = 3,
+    label.size = 0,
+    fill = "white",
+    alpha = 0.85
+  ) +
+  ggplot2::scale_fill_viridis_d(option = "cividis", name = "Category") +
+  ggplot2::scale_x_date(date_breaks = "2 years", date_labels = "%Y") +
+  ggplot2::scale_y_continuous(
+    labels = scales::label_percent(),
+    limits = c(0, 1),
+    expand = c(0, 0)
+  ) +
+  ggplot2::labs(
+    title = "How crypto market capitalization is distributed",
+    subtitle = "Daily category shares of combined market cap across the 22 tracked coins",
+    x = "Date",
+    y = "Share of combined market cap",
+    caption = "Source: PPBDS tutorial data — daily_prices.parquet, coin_metadata.parquet, and categories.parquet."
+  ) +
+  ggplot2::theme_minimal(base_size = 12) +
+  ggplot2::theme(
+    plot.title = ggplot2::element_text(face = "bold"),
+    plot.caption = ggplot2::element_text(hjust = 0),
+    panel.grid.minor = ggplot2::element_blank()
+  )
+```
